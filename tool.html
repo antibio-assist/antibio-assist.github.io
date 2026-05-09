@@ -31,10 +31,129 @@
     <link href="public/assets/css/theme.css" rel="stylesheet" />
     
     <style>
-        :root {
-            width: 60%;
-        }
-    </style>
+  body {
+    margin: 0;
+    background-color: #f7fbfd;
+  }
+
+  .tool-section {
+    padding: 140px 24px 60px;
+  }
+
+  .tool-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .form-card,
+  .calendar-card {
+    background: white;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  #medicineForm {
+    width: 100%;
+  }
+
+  #medicineForm h2 {
+    margin-bottom: 20px;
+  }
+
+  #medicineForm label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  #medicineForm input,
+  #medicineForm textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 15px;
+  }
+
+  #medicineForm textarea {
+    min-height: 90px;
+    resize: vertical;
+  }
+
+  #medicineForm button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: #2d9cdb;
+    color: white;
+    font-weight: 600;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  #medicineForm button:hover {
+    background-color: #2386bd;
+  }
+
+  #interactionResults {
+    margin-top: 15px;
+    padding: 14px;
+    border: 1px solid #d8e6ef;
+    border-radius: 12px;
+    background-color: #f9fcfe;
+    font-size: 14px;
+  }
+
+  #calendar {
+    width: 100%;
+  }
+
+  .fc {
+    font-size: 14px;
+  }
+
+  @media (max-width: 992px) {
+    .tool-container {
+      grid-template-columns: 1fr;
+    }
+
+    .tool-section {
+      padding-top: 120px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .tool-section {
+      padding: 110px 14px 40px;
+    }
+
+    .form-card,
+    .calendar-card {
+      padding: 16px;
+      border-radius: 14px;
+    }
+
+    .navbar-brand img {
+      width: 220px;
+    }
+
+    .fc-toolbar {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .fc-toolbar-title {
+      font-size: 20px !important;
+    }
+  }
+</style>
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -186,39 +305,50 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
         </div>
       </nav>
-    <form id="medicineForm" style="padding:20px; max-width:50%; margin:auto; margin-left:0px ; margin-right: 0px; position: relative;">
-  <h2>Antibiotic Schedule</h2>
+<section class="tool-section">
+  <div class="tool-container">
 
-  <label>Antibiotic name:</label>
-  <input type="text" id="antibioticName" required><br><br>
+    <div class="form-card">
+      <form id="medicineForm">
+        <h2>Antibiotic Schedule</h2>
 
-  <label>Start date:</label>
-  <input type="date" id="startDate"><br><br>
+        <label>Antibiotic name:</label>
+        <input type="text" id="antibioticName" required>
 
-  <label>Start time:</label>
-  <input type="time" id="startTime"><br><br>
+        <label>Start date:</label>
+        <input type="date" id="startDate">
 
-  <label>Dose interval (every X hours):</label>
-  <input type="number" id="doseInterval" min="1" required><br><br>
+        <label>Start time:</label>
+        <input type="time" id="startTime">
 
-  <label>Duration in days:</label>
-  <input type="number" id="durationDays" min="1" required><br><br>
+        <label>Dose interval (every X hours):</label>
+        <input type="number" id="doseInterval" min="1" required>
 
-  <label>Other medications you take:</label>
-  <textarea id="otherMeds"></textarea><br><br>
-    <br>
-<button type="button" id="checkInteractionsBtn">Check Drug Interactions</button>
+        <label>Duration in days:</label>
+        <input type="number" id="durationDays" min="1" required>
 
-<div id="interactionResults" style="margin-top:15px; padding:10px; border:1px solid #ccc;">
-  Interaction results will appear here.
-  <p style="font-size:12px;">
-  This tool is for educational purposes only. Always ask a doctor or pharmacist before changing medication.
-</p>
-</div>
+        <label>Other medications you take:</label>
+        <textarea id="otherMeds" placeholder="Example: Simvastatin, Warfarin, Ibuprofen"></textarea>
 
-  <button type="submit">Add to Calendar</button>
-</form>
-    <div style="position: absolute; top: 10px; right: -400px; width: 700px" id='calendar'></div>
+        <button type="button" id="checkInteractionsBtn">Check Drug Interactions</button>
+
+        <div id="interactionResults">
+          Interaction results will appear here.
+          <p style="font-size:12px; margin-bottom:0;">
+            This tool is for educational purposes only. Always ask a doctor or pharmacist before changing medication.
+          </p>
+        </div>
+
+        <button type="submit">Add to Calendar</button>
+      </form>
+    </div>
+
+    <div class="calendar-card">
+      <div id="calendar"></div>
+    </div>
+
+  </div>
+</section>
 </main>  
 </body>
 </html>

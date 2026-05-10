@@ -211,41 +211,47 @@ document.addEventListener('DOMContentLoaded', function() {
   var nowMinutes = String(today.getMinutes()).padStart(2, "0");
   document.getElementById("startTime").value = nowHours + ":" + nowMinutes;
 
-  document.getElementById("medicineForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    let eventsForExport = [];
-    var antibioticName = document.getElementById("antibioticName").value;
-    var startDate = document.getElementById("startDate").value;
-    var startTime = document.getElementById("startTime").value;
-    var doseInterval = Number(document.getElementById("doseInterval").value);
-    var durationDays = Number(document.getElementById("durationDays").value);
-    var otherMeds = document.getElementById("otherMeds").value;
+document.getElementById("medicineForm").addEventListener("submit", function(event) {
+  event.preventDefault();
 
-    var startDateTime = new Date(startDate + "T" + startTime);
-    var endDateTime = new Date(startDateTime);
-    endDateTime.setDate(endDateTime.getDate() + durationDays);
+  var antibioticName = document.getElementById("antibioticName").value;
+  var startDate = document.getElementById("startDate").value;
+  var startTime = document.getElementById("startTime").value;
+  var doseInterval = Number(document.getElementById("doseInterval").value);
+  var durationDays = Number(document.getElementById("durationDays").value);
+  var otherMeds = document.getElementById("otherMeds").value;
 
-    var currentDose = new Date(startDateTime);
+  var startDateTime = new Date(startDate + "T" + startTime);
+  var endDateTime = new Date(startDateTime);
+  endDateTime.setDate(endDateTime.getDate() + durationDays);
 
-    while (currentDose <= endDateTime) {
-      calendar.addEvent({
-        title: antibioticName + " dose",
-        start: currentDose.toISOString(),
-        extendedProps: {
-          otherMedications: otherMeds
-        }
-      });
+  var currentDose = new Date(startDateTime);
 
-      currentDose.setHours(currentDose.getHours() + doseInterval);
-    }
+  var eventsForExport = [];
+
+  while (currentDose <= endDateTime) {
+    var doseDate = new Date(currentDose);
+
+    calendar.addEvent({
+      title: antibioticName + " dose",
+      start: doseDate.toISOString(),
+      extendedProps: {
+        otherMedications: otherMeds
+      }
+    });
+
     eventsForExport.push({
-  title: antibioticName + " dose",
-  start: currentDose
-});
-    alert("Medication schedule added to calendar!");
-  });
+      title: antibioticName + " dose",
+      start: doseDate
+    });
+
+    currentDose.setHours(currentDose.getHours() + doseInterval);
+  }
+
   downloadICS(eventsForExport);
 
+  alert("Medication schedule added to calendar and downloaded as a calendar file!");
+});
   document.getElementById("checkInteractionsBtn").addEventListener("click", async function() {
   var antibiotic = document.getElementById("antibioticName").value.trim();
   var otherMeds = document.getElementById("otherMeds").value

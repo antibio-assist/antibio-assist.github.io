@@ -156,6 +156,34 @@
 </style>
 
     <script>
+      function downloadICS(events) {
+  let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\n";
+
+  events.forEach(event => {
+    let start = new Date(event.start);
+    let end = new Date(start);
+    end.setMinutes(end.getMinutes() + 30);
+
+    function formatDate(d) {
+      return d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    }
+
+    icsContent += `BEGIN:VEVENT
+SUMMARY:${event.title}
+DTSTART:${formatDate(start)}
+DTEND:${formatDate(end)}
+DESCRIPTION:Medication dose
+END:VEVENT\n`;
+  });
+
+  icsContent += "END:VCALENDAR";
+
+  let blob = new Blob([icsContent], { type: "text/calendar" });
+  let link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "medication_schedule.ics";
+  link.click();
+}
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
 
@@ -185,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById("medicineForm").addEventListener("submit", function(event) {
     event.preventDefault();
-
+    let eventsForExport = [];
     var antibioticName = document.getElementById("antibioticName").value;
     var startDate = document.getElementById("startDate").value;
     var startTime = document.getElementById("startTime").value;
@@ -210,9 +238,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
       currentDose.setHours(currentDose.getHours() + doseInterval);
     }
-
+    eventsForExport.push({
+  title: antibioticName + " dose",
+  start: currentDose
+});
     alert("Medication schedule added to calendar!");
   });
+  downloadICS(eventsForExport);
 
   document.getElementById("checkInteractionsBtn").addEventListener("click", async function() {
   var antibiotic = document.getElementById("antibioticName").value.trim();
@@ -339,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
           </p>
         </div>
 
-        <button type="submit">Add to Calendar</button>
+        <button type="submit" >Add to Calendar</button>
       </form>
     </div>
 

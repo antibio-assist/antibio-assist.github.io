@@ -210,6 +210,38 @@ document.addEventListener('DOMContentLoaded', function() {
   var nowHours = String(today.getHours()).padStart(2, "0");
   var nowMinutes = String(today.getMinutes()).padStart(2, "0");
   document.getElementById("startTime").value = nowHours + ":" + nowMinutes;
+  function downloadICS(events) {
+  var icsContent = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Antibiotic Assistant//EN\r\n";
+
+  events.forEach(function(event) {
+    var start = new Date(event.start);
+    var end = new Date(start);
+    end.setMinutes(end.getMinutes() + 30);
+
+    function formatDate(date) {
+      return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    }
+
+    icsContent += "BEGIN:VEVENT\r\n";
+    icsContent += "SUMMARY:" + event.title + "\r\n";
+    icsContent += "DTSTART:" + formatDate(start) + "\r\n";
+    icsContent += "DTEND:" + formatDate(end) + "\r\n";
+    icsContent += "DESCRIPTION:Medication dose\r\n";
+    icsContent += "END:VEVENT\r\n";
+  });
+
+  icsContent += "END:VCALENDAR\r\n";
+
+  var blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+  var link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = "medication_schedule.ics";
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 
 document.getElementById("medicineForm").addEventListener("submit", function(event) {
   event.preventDefault();
